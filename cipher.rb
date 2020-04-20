@@ -1,5 +1,3 @@
-
-
 def cipher(_string, _offset)
 
   final = ""
