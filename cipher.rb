@@ -1,3 +1,6 @@
+# dont shoot me for the variable names.
+# yes I know this could all be on one line if i knew ruby better
+
 def cipher(_string, _offset)
 
   final = ""
@@ -17,8 +20,11 @@ end
 # Upper case = 65 - 90
 # Lower case = 97 - 122
 def shift_uppercase(_int, _shift)
+
+  # if we are ultimately moving backwards
   if _shift < 0
     _shift *= -1
+
     while _shift > 0
       _shift = _shift - 1
       _int = _int - 1
@@ -26,7 +32,9 @@ def shift_uppercase(_int, _shift)
         _int = 90
       end
     end
+
   else
+    #moving forwards in the alphabet
     while _shift > 0
       _shift = _shift - 1
       _int = _int + 1
