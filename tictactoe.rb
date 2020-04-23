@@ -11,7 +11,7 @@ class BoardSpace
     @icon = icon
   end
   def get_space_icon
-      return @icon
+    return @icon
   end
 end
 
@@ -26,60 +26,30 @@ class Player
   end
 end
 
-# TODO LIST:
-# Keep player from overwriting same spaces
-#   -detect if value is already there
-# Exit case
-# case in check_for_win if all slots have been full and tie game
-#
-
-
 class Game
 
-  # TODO: Let's figure out how to get this dialog somewhere.
   def initialize
     puts "This is the correct file"
     puts "Enter Player 1 Name"
     name = gets
-    @player_1 = Player.new(name, "X")
+    @player_1 = Player.new(name.upcase, "X")
 
     puts "Enter Player 2 Name"
     name = gets
-    @player_2 = Player.new(name, "O")
+    @player_2 = Player.new(name.upcase, "O")
 
     puts "Welcome " + @player_1.name + " And " + @player_2.name
 
-
-    #
-    # if @space_array[0] == "1"
-    #   puts "yes"
-    #   exit
-    # end
-
     generate_board
-
-    # if @space_array[0].get_space_icon == "X"
-    #   puts "YES"
-    # else
-    #   puts "NO"
-    # end
-
     refresh_display
     new_turn(@player_1)
   end
 
-  # TODO: we are going to work on this.
   public
   def new_turn(player)
-    puts " #{player.name}, - enter a space number"
+    puts " #{player.name} - enter a space number"
     choice = gets.to_i
     set_space_icon(choice -1, player)
-    #
-    # puts " #{@player_2.name}, - enter a space number"
-    # choice = gets.to_i
-    # set_space_icon(choice -1, @player_2.icon)
-
-    # new_turn(@player_1)
   end
 
   private
@@ -95,16 +65,18 @@ class Game
   def set_space_icon(index, player)
     # Checks if a valid move before assigning.
     if @space_array[index].get_space_icon == "X" ||  @space_array[index].get_space_icon == "O"
+      puts "Space is already taken, enter another option"
       if player.icon == "X"
         new_turn(@player_1)
       else
         new_turn(@player_2)
       end
     end
-    # end of this
+    # sets icon
     @space_array[index].set_space_icon(player.icon)
     refresh_display
     check_for_win
+    # decides who goes next
     if player.icon == "X"
       new_turn(@player_2)
     else
@@ -114,10 +86,20 @@ class Game
 
   def check_for_win
    win_cond= [ [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6] ]
-   win_cond.each do |condidion|
-     win_game(@player_1) if condidion.all? { |cell| @space_array[cell].get_space_icon=="X" }
-     win_game(@player_2) if condidion.all? { |cell| @space_array[cell].get_space_icon=="O" }
+   win_cond.each do |condition|
+     win_game(@player_1) if condition.all? { |cell| @space_array[cell].get_space_icon=="X" }
+     win_game(@player_2) if condition.all? { |cell| @space_array[cell].get_space_icon=="O" }
    end
+   if check_for_full_board
+     puts "Its a draw"
+     exit
+   end
+  end
+
+  def check_for_full_board
+    @space_array.each do |space|
+      return false unless space.get_space_icon == "X" || space.get_space_icon == "O"
+    end
   end
 
   def win_game(player)
@@ -132,6 +114,7 @@ class Game
       puts @space_array[x].get_space_icon + " | " + @space_array[x + 1].get_space_icon + " | " + @space_array[x +2].get_space_icon
       x += 3
     end
+    puts "_________"
   end
 end
 
