@@ -26,6 +26,14 @@ class Player
   end
 end
 
+# TODO LIST:
+# Keep player from overwriting same spaces
+#   -detect if value is already there
+# Exit case
+# case in check_for_win if all slots have been full and tie game
+#
+
+
 class Game
 
   # TODO: Let's figure out how to get this dialog somewhere.
@@ -41,23 +49,37 @@ class Game
 
     puts "Welcome " + @player_1.name + " And " + @player_2.name
 
+
+    #
+    # if @space_array[0] == "1"
+    #   puts "yes"
+    #   exit
+    # end
+
     generate_board
+
+    # if @space_array[0].get_space_icon == "X"
+    #   puts "YES"
+    # else
+    #   puts "NO"
+    # end
+
     refresh_display
-    new_turn
+    new_turn(@player_1)
   end
 
   # TODO: we are going to work on this.
   public
-  def new_turn
-    puts " #{@player_1.name}, - enter a space number"
+  def new_turn(player)
+    puts " #{player.name}, - enter a space number"
     choice = gets.to_i
-    set_space_icon(choice -1, @player_1.icon)
+    set_space_icon(choice -1, player)
+    #
+    # puts " #{@player_2.name}, - enter a space number"
+    # choice = gets.to_i
+    # set_space_icon(choice -1, @player_2.icon)
 
-    puts " #{@player_2.name}, - enter a space number"
-    choice = gets.to_i
-    set_space_icon(choice -1, @player_2.icon)
-
-    new_turn
+    # new_turn(@player_1)
   end
 
   private
@@ -70,28 +92,37 @@ class Game
     end
   end
 
-  def set_space_icon(index, icon)
-    @space_array[index].set_space_icon(icon)
+  def set_space_icon(index, player)
+    # Checks if a valid move before assigning.
+    if @space_array[index].get_space_icon == "X" ||  @space_array[index].get_space_icon == "O"
+      if player.icon == "X"
+        new_turn(@player_1)
+      else
+        new_turn(@player_2)
+      end
+    end
+    # end of this
+    @space_array[index].set_space_icon(player.icon)
     refresh_display
     check_for_win
+    if player.icon == "X"
+      new_turn(@player_2)
+    else
+      new_turn(@player_1)
+    end
   end
 
   def check_for_win
    win_cond= [ [0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6] ]
-
    win_cond.each do |condidion|
-     puts "X wins!" if condidion.all? { |cell| @space_array[cell].get_space_icon=="X" }
-     puts "O wins!" if condidion.all? { |cell| @space_array[cell].get_space_icon=="O" }
+     win_game(@player_1) if condidion.all? { |cell| @space_array[cell].get_space_icon=="X" }
+     win_game(@player_2) if condidion.all? { |cell| @space_array[cell].get_space_icon=="O" }
    end
-   #
-   # # imperative for
-   # for i in [1,2,3] do
-   #   puts i
-   # end
-   #
-   # # functional each
-   # [1,2,3].each { |i| puts i }
+  end
 
+  def win_game(player)
+    puts "#{player.name} WINS!"
+    exit
   end
 
   def refresh_display
@@ -114,31 +145,3 @@ game = Game.new
 # space1.set_space_icon("X")
 # puts space1.get_space_icon #should be X
 # end testing
-
-#
-#
-# 1:
-# +1
-# +3
-#
-# 2:
-# -1
-# +1
-# +3
-#
-# 3:
-# -1
-# +3
-#
-# 4:
-# -3
-# +1
-# +3
-#
-# 5:
-# -1
-# +1
-# -3
-# +3
-#
-# 6:
